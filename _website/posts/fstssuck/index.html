@@ -1,0 +1,458 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Finite State Transducers Suck &#8212; Leah Velleman  documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="author" title="About these documents" href="../../about/" />
+    <link rel="index" title="Index" href="../../genindex/" />
+    <link rel="search" title="Search" href="../../search/" />
+  
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  
+  <link rel="alternate" type="application/atom+xml"  href="../../blog/atom.xml" title="Leah Velleman Blog">
+  
+  
+  <link href="True" rel="stylesheet">
+  
+  <style type="text/css">
+    ul.ablog-archive {list-style: none; overflow: auto; margin-left: 0px}
+    ul.ablog-archive li {float: left; margin-right: 5px; font-size: 80%}
+    ul.postlist a {font-style: italic;}
+    ul.postlist-style-disc {list-style-type: disc;}
+    ul.postlist-style-none {list-style-type: none;}
+    ul.postlist-style-circle {list-style-type: circle;}
+  </style>
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="finite-state-transducers-suck">
+<h1>Finite State Transducers Suck<a class="headerlink" href="#finite-state-transducers-suck" title="Permalink to this headline">¶</a></h1>
+<p>Writing finite state transducers by hand <em>really sucks.</em></p>
+<p>I think it might not have to.</p>
+<div class="section" id="what-we-talk-about-when-we-talk-about-suck">
+<h2>What we talk about when we talk about suck<a class="headerlink" href="#what-we-talk-about-when-we-talk-about-suck" title="Permalink to this headline">¶</a></h2>
+<p>(This is not an issue for most people. But if you&#8217;ve ever tried to do any
+kind of serious computational morphology in a low-resource language, you are
+nodding and grimacing right now.)</p>
+<p>Intuitively you might think it&#8217;s because they&#8217;re computationally underpowered.
+And if that&#8217;s the reason they suck, then there&#8217;s no fixing it — the reason
+people use them at all is that they&#8217;re far enough from Turing-complete to have
+some convenient properties, so adding power is out of the question.</p>
+<p>But there&#8217;s another possibility, which is that they suck for the same boring
+reasons that a lot of Turing-complete languages suck.  Writing FSTs means
+working in a domain-specific language that has...</p>
+<blockquote>
+<div><ul class="simple">
+<li>Syntax from an era when bits of disk space were expensive</li>
+<li>A tiny-to-nonexistent &#8220;standard library&#8221;</li>
+<li>No data types</li>
+<li>No debugger</li>
+<li>No namespaces or modules</li>
+<li>No build system</li>
+</ul>
+</div></blockquote>
+<p>Fixing <em>these</em> problems is actually a thing we can do without adding computational
+complexity. Adding types to a language, for instance, doesn&#8217;t actually increase
+the number of things that it can handle in theory. (A Turing-complete language is
+Turing-complete with or without a good type system.) But it might well increase the
+number of things that a normal human would bother doing in it.</p>
+</div>
+<div class="section" id="analogy-regular-expressions">
+<h2>Analogy: regular expressions<a class="headerlink" href="#analogy-regular-expressions" title="Permalink to this headline">¶</a></h2>
+<p>A lot of people have pointed out that &#8220;regular expression&#8221; really means two
+things.</p>
+<p>One thing it can mean is &#8220;an expression that describes a <a class="reference external" href="en.wikipedia.org/wiki/Regular_language">regular language</a>,&#8221; meaning a language that can be
+recognized by a finite state automaton or a read-only Turing machine. If you
+wanted to be irritatingly pedantic, you could argue that this was a regular
+expression:</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">Trie</span><span class="p">(</span><span class="n">word</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/usr/bin/words&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>After all, tries are a kind of finite state automaton, and
+this expression describes one.</p>
+<p>But when most people say &#8220;regular expression,&#8221; they&#8217;re not talking about
+computational power — they&#8217;re talking about restricted syntax. What they mean
+is &#8220;one of those irritating strings with a million slashes and asterisks that
+you use as an argument for <cite>grep</cite>.&#8221; In fact, regular expressions in the second
+sense <a class="reference external" href="https://nikic.github.io/2012/06/15/The-true-power-of-regular-expressions.html">don&#8217;t have to be regular expressions in the first sense</a>.
+This one, as the previous link explains, isn&#8217;t:</p>
+<div class="code perl highlight-default"><div class="highlight"><pre><span></span><span class="s2">&quot;/^(a(?1)?b)$/&quot;</span>
+</pre></div>
+</div>
+<p>It matches strings consisting of an arbitrary number of <cite>a</cite>s followed by the
+same number of <cite>b</cite>s. That&#8217;s beyond the computational power of a finite
+state automaton. In the computational-power sense, it isn&#8217;t a regular expresion.
+But in the restricted-syntax sense, it is.</p>
+<p>So when people say &#8220;regular expressions suck,&#8221; they can mean one of two things:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>&#8220;It sucks to work in a non-Turing-complete language when you&#8217;re used to
+Turing-completeness.&#8221;</li>
+<li>&#8220;It sucks to try to write real programs to do real tasks when you&#8217;re
+using a garbage syntax that looks like line noise.&#8221;</li>
+</ol>
+</div></blockquote>
+<p>And these two problems have different solutions. The first would technically be
+solved by switching to Befunge, <a class="reference external" href="https://en.wikipedia.org/wiki/Combinatory_logic#Completeness_of_the_S-K_basis">doing everything with the S and K combinators</a>,
+or writing binary executables bit-by-bit by hand. But none of those would get
+you anywhere on the second one.</p>
+</div>
+<div class="section" id="back-to-fsts">
+<h2>Back to FSTs<a class="headerlink" href="#back-to-fsts" title="Permalink to this headline">¶</a></h2>
+<p>My hunch right now is that FSTs have a lot more type-II suck than type-I suck.
+The issue isn&#8217;t they&#8217;re underpowered. It&#8217;s that the syntax we use to create
+them is inconvenient.</p>
+</div>
+</div>
+
+  <div class="section">
+  
+    
+
+
+<div class="section">
+  <span style="float: left;">
+  
+  
+  <a href="../hardpart/">
+    <i class="fa fa-arrow-circle-left"></i>
+    The hard part(s)
+  </a>
+  
+  </span>
+  <span>&nbsp;</span>
+  <span style="float: right;">
+  
+  
+  <a href="../../first-post/">
+    First Post
+    <i class="fa fa-arrow-circle-right"></i>
+  </a>
+  </span>
+  
+</div>
+
+  
+  
+  </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../">Leah Velleman</a></h1>
+
+
+
+
+
+
+
+
+
+  
+  
+  <h2>
+  
+  <i class="fa fa-calendar"></i>
+    Aug 18, 2017
+  
+  </h2>
+
+  <ul>
+    
+
+  
+
+  
+
+  
+
+  
+
+  
+  <li><i class="fa-fw fa fa-tags"></i>
+      
+    
+      
+      <a href="../../blog/tag/cloudburst/">cloudburst</a>,
+      
+    
+      
+      <a href="../../blog/tag/linguistics/">linguistics</a>
+      
+    </li>
+  
+  
+  </ul>
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../poetry/">Poetry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../research/">Linguistics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../elsewhere/">Code</a></li>
+</ul>
+
+
+  <ul>
+    <li>Recent posts:</li>
+    <ul>
+    
+    
+    <li>
+        <span >
+            <a href="../../first-post/"
+                >First Post</a>
+            <span class="tagholder"> 
+                
+                <a class="tag" href="../../blog/tag/atag/">atag</a>
+                
+            </span>
+        </span>
+        
+    </li>
+    
+    <li>
+        <span  class = "current" >
+            <a href="#"
+                
+                class = "current"
+                >Finite State Transducers Suck</a>
+            <span class="tagholder"> 
+                
+                <a class="tag" href="../../blog/tag/cloudburst/">cloudburst</a>
+                
+                <a class="tag" href="../../blog/tag/linguistics/">linguistics</a>
+                
+            </span>
+        </span>
+        <ul>
+<li><a class="reference internal" href="#what-we-talk-about-when-we-talk-about-suck">What we talk about when we talk about suck</a></li>
+<li><a class="reference internal" href="#analogy-regular-expressions">Analogy: regular expressions</a></li>
+<li><a class="reference internal" href="#back-to-fsts">Back to FSTs</a></li>
+</ul>
+</li>
+</ul>
+
+    </li>
+    
+    <li>
+        <span >
+            <a href="../hardpart/"
+                >The hard part(s)</a>
+            <span class="tagholder"> 
+                
+                <a class="tag" href="../../blog/tag/cloudburst/">cloudburst</a>
+                
+                <a class="tag" href="../../blog/tag/linguistics/">linguistics</a>
+                
+            </span>
+        </span>
+        
+    </li>
+    
+    <li>
+        <span >
+            <a href="../monthone/"
+                >How to do things with redundancy</a>
+            <span class="tagholder"> 
+                
+                <a class="tag" href="../../blog/tag/cloudburst/">cloudburst</a>
+                
+                <a class="tag" href="../../blog/tag/linguistics/">linguistics</a>
+                
+            </span>
+        </span>
+        
+    </li>
+    
+    <li>
+        <span >
+            <a href="../ausmus/"
+                >The source of Conflict</a>
+            <span class="tagholder"> 
+                
+                <a class="tag" href="../../blog/tag/fasola/">fasola</a>
+                
+                <a class="tag" href="../../blog/tag/history/">history</a>
+                
+            </span>
+        </span>
+        
+    </li>
+    
+</ul>
+    <li> 
+        <span class=""><a href="../../blog/archive/">Archive</a>
+            <span class="tagholder">
+            <a class="tag" href="../../blog/tag/">tags</a>
+            
+            <a class="tag" href="../../blog/2017/">2017</a>
+            
+            <a class="tag" href="../../blog/2015/">2015</a>
+            
+            <a class="tag" href="../../blog/2014/">2014</a>
+            
+        </span>
+    </span>
+</li>
+  </ul>
+  <div style="text-align: center;">
+    <a href="mailto:leahvelleman+website@gmail.com"><img src="../../blog/tag//../../_static/email.png" height="32px"></a>
+    <a href="https://www.twitter.com/leahvelleman"><img src="../../blog/tag//../../_static/twitter.png" height="32px"></a>
+    <a href="https://github.com/leahvelleman"><img src="../../blog/tag//../../_static/github.png" height="32px"></a>
+</div>
+
+  <h3><a href="../../blog/tag/">Tags</a></h3>
+  <style type="text/css">
+    ul.ablog-cloud {list-style: none; overflow: auto;}
+    ul.ablog-cloud li {float: left; height: 20pt; line-height: 18pt; margin-right: 5px;}
+    ul.ablog-cloud a {text-decoration: none; vertical-align: middle;}
+    li.ablog-cloud-1{font-size: 80%;}
+    li.ablog-cloud-2{font-size: 95%;}
+    li.ablog-cloud-3{font-size: 110%;}
+    li.ablog-cloud-4{font-size: 125%;}
+    li.ablog-cloud-5{font-size: 140%;}
+  </style>
+  <ul class="ablog-cloud">
+    
+      
+      <li class="ablog-cloud ablog-cloud-1">
+        <a href="../../blog/tag/atag/">atag</a></li>
+      
+    
+      
+      <li class="ablog-cloud ablog-cloud-3">
+        <a href="../../blog/tag/cloudburst/">cloudburst</a></li>
+      
+    
+      
+      <li class="ablog-cloud ablog-cloud-5">
+        <a href="../../blog/tag/fasola/">fasola</a></li>
+      
+    
+      
+      <li class="ablog-cloud ablog-cloud-1">
+        <a href="../../blog/tag/history/">history</a></li>
+      
+    
+      
+      <li class="ablog-cloud ablog-cloud-2">
+        <a href="../../blog/tag/lilypond/">lilypond</a></li>
+      
+    
+      
+      <li class="ablog-cloud ablog-cloud-3">
+        <a href="../../blog/tag/linguistics/">linguistics</a></li>
+      
+    
+      
+      <li class="ablog-cloud ablog-cloud-1">
+        <a href="../../blog/tag/poetry/">poetry</a></li>
+      
+    
+      
+      <li class="ablog-cloud ablog-cloud-1">
+        <a href="../../blog/tag/python/">python</a></li>
+      
+    
+      
+      <li class="ablog-cloud ablog-cloud-1">
+        <a href="../../blog/tag/ruby/">ruby</a></li>
+      
+    
+  </ul>
+
+  <h3><a href="../../blog/category/">Categories</a></h3>
+  <ul>
+  
+    
+    <li><a href="../../blog/category/music/">music (1)</a></li>
+    
+  
+  </ul>
+
+  <h3><a href="../../blog/archive/">Archives</a></h3>
+  <ul>
+  
+    
+    <li><a href="../../blog/2017/">2017 (4)</a></li>
+    
+  
+    
+    <li><a href="../../blog/2015/">2015 (3)</a></li>
+    
+  
+    
+    <li><a href="../../blog/2014/">2014 (3)</a></li>
+    
+  
+  </ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search/" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Leah Velleman.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../../_sources/posts/fstssuck.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

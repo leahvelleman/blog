@@ -1,0 +1,510 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>@watts_ebooks &#8212; Leah Velleman  documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="author" title="About these documents" href="../../about/" />
+    <link rel="index" title="Index" href="../../genindex/" />
+    <link rel="search" title="Search" href="../../search/" />
+  
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  
+  <link rel="alternate" type="application/atom+xml"  href="../../blog/atom.xml" title="Leah Velleman Blog">
+  
+  
+  <link href="True" rel="stylesheet">
+  
+  <style type="text/css">
+    ul.ablog-archive {list-style: none; overflow: auto; margin-left: 0px}
+    ul.ablog-archive li {float: left; margin-right: 5px; font-size: 80%}
+    ul.postlist a {font-style: italic;}
+    ul.postlist-style-disc {list-style-type: disc;}
+    ul.postlist-style-none {list-style-type: none;}
+    ul.postlist-style-circle {list-style-type: circle;}
+  </style>
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="watts-ebooks">
+<h1>&#64;watts_ebooks<a class="headerlink" href="#watts-ebooks" title="Permalink to this headline">¶</a></h1>
+<p>I&#8217;ve been fascinated for a while by the idea of generative poetry. Recently I
+started tinkering with it myself, and my first experiment is working well
+enough that I&#8217;ve set it up as a Twitter bot: &#64;watts_ebooks, tweeting randomly
+generated hymn stanzas in the style of Isaac Watts, such as this (ethically and
+theologically dubious!) example:</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><cite>with solemn fear, with deep</cite></div>
+<div class="line"><cite>repentance drown mine eyes</cite></div>
+<div class="line"><cite>to god most holy, just and true,</cite></div>
+<div class="line"><cite>but deal in theft and lies.</cite></div>
+</div>
+</div></blockquote>
+<div class="section" id="who">
+<h2>Who?<a class="headerlink" href="#who" title="Permalink to this headline">¶</a></h2>
+<p>Watts is hardly a household name anymore, unless you&#8217;re a Protestant church
+musician or a Sacred Harp singer, but in his own way he was one of the most
+influential poets in the English language. He wrote hymns for church use,
+including English translations of many of the Psalms. His best-known poems
+include <em>Joy to the World,</em> <em>O God Our Help in Ages Past,</em> and <em>This is the Day
+the Lord Has Made.</em></p>
+</div>
+<div class="section" id="why">
+<h2>Why?<a class="headerlink" href="#why" title="Permalink to this headline">¶</a></h2>
+<p>Watts&#8217;s writing has a few features that make it especially convenient for this
+sort of project:</p>
+<ol class="arabic simple">
+<li>His poems have extremly <em>consistent meter.</em> The majority are in Common Meter
+(also known as &#8220;what Emily Dickinson wrote in&#8221; or &#8220;that kind of stanza that
+you can sing to the tune of the Gilligan&#8217;s Island theme song&#8221;), and nearly all
+the rest are in some other iambic meter.</li>
+<li>Within his poems, the meter is <em>extremely regular.</em> This sets him apart from
+the other famous Common Meter author, Emily Dickinson, whose poetry stretches
+the rules quite a bit.</li>
+<li>He was <em>incredibly prolific,</em> credited with over 750 hymns.</li>
+<li>He <em>revisits the same imagery</em> again and again in his poems — mostly themes
+from the Bible and from nature.</li>
+</ol>
+<p>The first two features make his poetic meter very easy for a computer to imitate. The next two solve some problems with data sparseness that come up when you try to generate text from a limited corpus.</p>
+</div>
+<div class="section" id="how">
+<h2>How?<a class="headerlink" href="#how" title="Permalink to this headline">¶</a></h2>
+<p>The easiest way to generate semi-coherent text is using a Markov chain. The algorithm looks like this:</p>
+<ol class="arabic simple">
+<li>Choose a <em>corpus</em> — a source text that you want to imitate.</li>
+<li>Start with a single, randomly chosen word — call it <code class="docutils literal"><span class="pre">w[1]</span></code></li>
+<li>Given a word <code class="docutils literal"><span class="pre">w[n-1]</span></code>, generate the next word <code class="docutils literal"><span class="pre">w[n]</span></code> by
+consulting the corpus: find words which are present after <code class="docutils literal"><span class="pre">w[n-1]</span></code> in
+the corpus, and choose one of them randomly.</li>
+</ol>
+<p>Step 3 can be repeated as long as you like, and the generated text can be made
+more realistic by considering longer sequences of words. For instance, you
+might generate <code class="docutils literal"><span class="pre">w[n]</span></code> based on <code class="docutils literal"><span class="pre">w[n-3:n]</span></code>.</p>
+<p>Poetry raises two extra challenges: meter and rhyme.</p>
+<div class="section" id="dealing-with-meter">
+<h3>Dealing with meter<a class="headerlink" href="#dealing-with-meter" title="Permalink to this headline">¶</a></h3>
+<p>English poetry requires stressed and unstressed syllables to alternate in a
+particular pattern. We need some way to make this alternation happen in the
+text we generate.</p>
+<p>One way to do this would be to use a pronouncing dictionary, like CMU&#8217;s free
+one. The CMU dictionary tells you, for any English word, how it is broken up
+into syllables, and which syllables count as stressed. You can use it to
+require stressed and unstressed syllables to alternate in a particular way in
+your generated text. (The easiest way is by trial and error: if the word you
+choose randomly in step 3 doesn&#8217;t fit the meter, throw it away and choose a
+different one.)</p>
+<p>The way I did it in this project is slightly different. My algorithm keeps
+track of its location in the line of poetry it is generating, measured by how
+many syllables it is away from the beginning of the line. It uses this
+information in choosing random words. For instance, if it is choosing a word
+that will start on the third syllable of a line, it looks for words that Watts
+used on the third syllable of one of <em>his</em> lines, and chooses randomly from
+among <em>those</em> words.</p>
+<p>This only works because of Watts&#8217;s incredibly regular meter. It turns out that,
+for instance, the third syllable in a line of Watts&#8217;s poetry is <em>always</em>
+unstressed — and the fourth syllable is always stressed, and so on. If there
+were any variation there, this trick would fail.</p>
+<p>This trick also turns out to do a very good job of imitating one of the most
+recognizable qualities of Watts&#8217;s poetry: its very square, stodgy character,
+which comes from starting and ending sentences almost exclusively at the
+beginnings and ends of lines. (In English-major terms: he used very little
+<em>enjambment.</em>) Here&#8217;s an example &#64;wattsbot poem showing off this property.</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><cite>for thou alone dost wondrous things,</cite></div>
+<div class="line"><cite>for thou alone dost thou not raise.</cite></div>
+<div class="line"><cite>my panting heart cries out for god;</cite></div>
+<div class="line"><cite>my god! how wondrous are his ways!</cite></div>
+</div>
+</div></blockquote>
+<p>On the other hand, it also makes it harder to generate complete poems. The
+algorithm often paints itself into a corner, ending up with no way to go
+forward because there are too few possible words that occur after a specific
+word combination _and_ on a specific syllable. In the twitterbot version, I&#8217;ve
+relaxed this constraint, so that it only tracks whether it is on an even or
+an odd syllable. This raises the rate of enjambment some, as in the example
+below, but makes it harder for the algorithm to get bogged down.</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><cite>nor shall my head be lifted high</cite></div>
+<div class="line"><cite>above their utmost rage, and face</cite></div>
+<div class="line"><cite>a sojourner below, as all</cite></div>
+<div class="line"><cite>my trust; thou hast preserved my face</cite></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="dealing-with-rhyme">
+<h3>Dealing with rhyme<a class="headerlink" href="#dealing-with-rhyme" title="Permalink to this headline">¶</a></h3>
+<p>The easiest way to deal with rhyme is to generate text backwards.</p>
+<p>You can make rhyming poetry while generating text forwards, but you end up
+wasting a lot of effort. If you want to generate a rhyming couplet, what you
+have to do is generate two whole lines of poetry — and then throw the second
+one out and generate it all over again if it does not rhyme with the first.
+Generating and throwing away whole lines of poetry makes the process slow.</p>
+<p>Working backwards means less wasted effort. Here&#8217;s how you generate a rhyming
+couplet backwards. First, generate the second line. Then, start choosing
+possible words for the end of the first line. If the word you choose does not
+rhyme, throw it out and choose another one. Because you&#8217;re only generating and
+throwing away a single word, and not a whole line, the process runs faster.</p>
+<p>(But how do you tell if two words rhyme? Here, again, the CMU pronouncing
+dictionary comes to the rescue.)</p>
+</div>
+</div>
+<div class="section" id="lessons-learned">
+<h2>Lessons learned<a class="headerlink" href="#lessons-learned" title="Permalink to this headline">¶</a></h2>
+<p>The thing that surprised me most was that such a dumb algorithm could work
+so well. (This is a common surprise in natural language processing — to the
+point that it probably shouldn&#8217;t surprise anyone anymore. And yet it does!)
+I&#8217;d expected that the trick of keeping count of syllables would fail miserably,
+but thought that seeing <em>how</em> it failed could be interesting.  Instead, it
+worked well enough to keep, and I was spared the task of coming up with some
+deeper analysis of Watts&#8217;s meter.</p>
+</div>
+</div>
+
+  <div class="section">
+  
+    
+
+
+<div class="section">
+  <span style="float: left;">
+  
+  
+  <a href="../four-shape/">
+    <i class="fa fa-arrow-circle-left"></i>
+    Four-shape solfège
+  </a>
+  
+  </span>
+  <span>&nbsp;</span>
+  <span style="float: right;">
+  
+  
+  <a href="../self-referential-bug/">
+    A bug that describes itself
+    <i class="fa fa-arrow-circle-right"></i>
+  </a>
+  </span>
+  
+</div>
+
+  
+  
+  </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../">Leah Velleman</a></h1>
+
+
+
+
+
+
+
+
+
+  
+  
+  <h2>
+  
+  <i class="fa fa-calendar"></i>
+    May 14, 2015
+  
+  </h2>
+
+  <ul>
+    
+
+  
+
+  
+
+  
+
+  
+
+  
+  <li><i class="fa-fw fa fa-tags"></i>
+      
+    
+      
+      <a href="../../blog/tag/ruby/">ruby</a>,
+      
+    
+      
+      <a href="../../blog/tag/poetry/">poetry</a>,
+      
+    
+      
+      <a href="../../blog/tag/fasola/">fasola</a>
+      
+    </li>
+  
+  
+  </ul>
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../poetry/">Poetry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../research/">Linguistics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../elsewhere/">Code</a></li>
+</ul>
+
+
+  <ul>
+    <li>Recent posts:</li>
+    <ul>
+    
+    
+    <li>
+        <span >
+            <a href="../../first-post/"
+                >First Post</a>
+            <span class="tagholder"> 
+                
+                <a class="tag" href="../../blog/tag/atag/">atag</a>
+                
+            </span>
+        </span>
+        
+    </li>
+    
+    <li>
+        <span >
+            <a href="../fstssuck/"
+                >Finite State Transducers Suck</a>
+            <span class="tagholder"> 
+                
+                <a class="tag" href="../../blog/tag/cloudburst/">cloudburst</a>
+                
+                <a class="tag" href="../../blog/tag/linguistics/">linguistics</a>
+                
+            </span>
+        </span>
+        
+    </li>
+    
+    <li>
+        <span >
+            <a href="../hardpart/"
+                >The hard part(s)</a>
+            <span class="tagholder"> 
+                
+                <a class="tag" href="../../blog/tag/cloudburst/">cloudburst</a>
+                
+                <a class="tag" href="../../blog/tag/linguistics/">linguistics</a>
+                
+            </span>
+        </span>
+        
+    </li>
+    
+    <li>
+        <span >
+            <a href="../monthone/"
+                >How to do things with redundancy</a>
+            <span class="tagholder"> 
+                
+                <a class="tag" href="../../blog/tag/cloudburst/">cloudburst</a>
+                
+                <a class="tag" href="../../blog/tag/linguistics/">linguistics</a>
+                
+            </span>
+        </span>
+        
+    </li>
+    
+    <li>
+        <span >
+            <a href="../ausmus/"
+                >The source of Conflict</a>
+            <span class="tagholder"> 
+                
+                <a class="tag" href="../../blog/tag/fasola/">fasola</a>
+                
+                <a class="tag" href="../../blog/tag/history/">history</a>
+                
+            </span>
+        </span>
+        
+    </li>
+    
+</ul>
+    <li> 
+        <span class=""><a href="../../blog/archive/">Archive</a>
+            <span class="tagholder">
+            <a class="tag" href="../../blog/tag/">tags</a>
+            
+            <a class="tag" href="../../blog/2017/">2017</a>
+            
+            <a class="tag" href="../../blog/2015/">2015</a>
+            
+            <a class="tag" href="../../blog/2014/">2014</a>
+            
+        </span>
+    </span>
+</li>
+  </ul>
+  <div style="text-align: center;">
+    <a href="mailto:leahvelleman+website@gmail.com"><img src="../../blog/tag//../../_static/email.png" height="32px"></a>
+    <a href="https://www.twitter.com/leahvelleman"><img src="../../blog/tag//../../_static/twitter.png" height="32px"></a>
+    <a href="https://github.com/leahvelleman"><img src="../../blog/tag//../../_static/github.png" height="32px"></a>
+</div>
+
+  <h3><a href="../../blog/tag/">Tags</a></h3>
+  <style type="text/css">
+    ul.ablog-cloud {list-style: none; overflow: auto;}
+    ul.ablog-cloud li {float: left; height: 20pt; line-height: 18pt; margin-right: 5px;}
+    ul.ablog-cloud a {text-decoration: none; vertical-align: middle;}
+    li.ablog-cloud-1{font-size: 80%;}
+    li.ablog-cloud-2{font-size: 95%;}
+    li.ablog-cloud-3{font-size: 110%;}
+    li.ablog-cloud-4{font-size: 125%;}
+    li.ablog-cloud-5{font-size: 140%;}
+  </style>
+  <ul class="ablog-cloud">
+    
+      
+      <li class="ablog-cloud ablog-cloud-1">
+        <a href="../../blog/tag/atag/">atag</a></li>
+      
+    
+      
+      <li class="ablog-cloud ablog-cloud-3">
+        <a href="../../blog/tag/cloudburst/">cloudburst</a></li>
+      
+    
+      
+      <li class="ablog-cloud ablog-cloud-5">
+        <a href="../../blog/tag/fasola/">fasola</a></li>
+      
+    
+      
+      <li class="ablog-cloud ablog-cloud-1">
+        <a href="../../blog/tag/history/">history</a></li>
+      
+    
+      
+      <li class="ablog-cloud ablog-cloud-2">
+        <a href="../../blog/tag/lilypond/">lilypond</a></li>
+      
+    
+      
+      <li class="ablog-cloud ablog-cloud-3">
+        <a href="../../blog/tag/linguistics/">linguistics</a></li>
+      
+    
+      
+      <li class="ablog-cloud ablog-cloud-1">
+        <a href="../../blog/tag/poetry/">poetry</a></li>
+      
+    
+      
+      <li class="ablog-cloud ablog-cloud-1">
+        <a href="../../blog/tag/python/">python</a></li>
+      
+    
+      
+      <li class="ablog-cloud ablog-cloud-1">
+        <a href="../../blog/tag/ruby/">ruby</a></li>
+      
+    
+  </ul>
+
+  <h3><a href="../../blog/category/">Categories</a></h3>
+  <ul>
+  
+    
+    <li><a href="../../blog/category/music/">music (1)</a></li>
+    
+  
+  </ul>
+
+  <h3><a href="../../blog/archive/">Archives</a></h3>
+  <ul>
+  
+    
+    <li><a href="../../blog/2017/">2017 (4)</a></li>
+    
+  
+    
+    <li><a href="../../blog/2015/">2015 (3)</a></li>
+    
+  
+    
+    <li><a href="../../blog/2014/">2014 (3)</a></li>
+    
+  
+  </ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search/" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Leah Velleman.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../../_sources/posts/wattsbot.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

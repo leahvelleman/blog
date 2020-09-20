@@ -1,0 +1,457 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>How to do things with redundancy &#8212; Leah Velleman  documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="author" title="About these documents" href="../../about/" />
+    <link rel="index" title="Index" href="../../genindex/" />
+    <link rel="search" title="Search" href="../../search/" />
+  
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  
+  <link rel="alternate" type="application/atom+xml"  href="../../blog/atom.xml" title="Leah Velleman Blog">
+  
+  
+  <link href="True" rel="stylesheet">
+  
+  <style type="text/css">
+    ul.ablog-archive {list-style: none; overflow: auto; margin-left: 0px}
+    ul.ablog-archive li {float: left; margin-right: 5px; font-size: 80%}
+    ul.postlist a {font-style: italic;}
+    ul.postlist-style-disc {list-style-type: disc;}
+    ul.postlist-style-none {list-style-type: none;}
+    ul.postlist-style-circle {list-style-type: circle;}
+  </style>
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="how-to-do-things-with-redundancy">
+<h1>How to do things with redundancy<a class="headerlink" href="#how-to-do-things-with-redundancy" title="Permalink to this headline">¶</a></h1>
+<p>API documentation has lots of examples. Examples tend to be redundant &#8212;
+you show a statement <em>and</em> the result of evaluating it, even though the one
+can usually be predicted from the other.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;You can probably guess what the next line of this example will say.&quot;&quot;&quot;</span><span class="p">)</span>
+<span class="go">You can probably guess what the next line of this example will say</span>
+</pre></div>
+</div>
+<p>Linguistic writing also has lots of examples. Usually those are also at least
+a little redundant. One reason is that, for the benefit of people who don&#8217;t
+speak the language you&#8217;re writing about, you usually show the same form at
+several different levels of representation &#8212; spelling, pronunciation,
+segmentation, gloss, etc.</p>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="n">Así</span> <span class="n">se</span> <span class="n">hace</span> <span class="n">un</span> <span class="n">ejemplo</span> <span class="n">lingüistico</span><span class="o">.</span>
+    <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">ʽsi</span> <span class="n">se</span> <span class="n">ʽa</span><span class="o">.</span><span class="n">se</span> <span class="n">uŋ</span> <span class="n">e</span><span class="o">.</span><span class="n">ʽχem</span><span class="o">.</span><span class="n">plo</span> <span class="n">liŋ</span><span class="o">.</span><span class="n">ʽgwi</span><span class="o">.</span><span class="n">sti</span><span class="o">.</span><span class="n">ko</span><span class="p">]</span>
+    <span class="n">así</span>  <span class="n">se</span>   <span class="n">hac</span><span class="o">-</span><span class="n">e</span>    <span class="n">un</span>     <span class="n">ejemplo</span>      <span class="n">lingüistic</span><span class="o">-</span><span class="n">o</span>
+    <span class="n">thus</span> <span class="n">REFL</span> <span class="n">make</span><span class="o">-</span><span class="mi">3</span><span class="n">sg</span> <span class="n">a</span><span class="o">.</span><span class="n">MASC</span> <span class="n">example</span><span class="o">.</span><span class="n">MASC</span> <span class="n">linguistic</span><span class="o">-</span><span class="n">MASC</span>
+    <span class="s1">&#39;This is how you make a linguistic example.&#39;</span>
+</pre></div>
+</div>
+<p>So for instance &#8212; to pick a piece of low-hanging fruit &#8212; you could easily
+write a program to generate the pronunciation line of that example from the
+spelling line, just like Python generates output from input in an interactive
+session.</p>
+<p>In the software doc world, we have tools to do useful things with the redundancy
+of our examples. Could those tools do anything useful for linguistics writers?</p>
+<p>Here are some things we do with redundant examples in the tech world:</p>
+<ul class="simple">
+<li><strong>Type Less/Think Less:</strong> Use a runner like <a href="#id1"><span class="problematic" id="id2">Dexy_</span></a> or <a href="#id3"><span class="problematic" id="id4">xlKJFSD_</span></a> that can auto-generate the
+output part of your examples, rather than entering it by hand.</li>
+<li><strong>Test for Consistency:</strong> Enter the input and the output parts of your
+examples by hand, but use a tool like <a href="#id5"><span class="problematic" id="id6">Autodoc_</span></a> that will check one against
+the other and notify you if there is a discrepancy.</li>
+<li><strong>Enrich UX:</strong> There&#8217;s lots of options here. Maybe you add a button
+to your examples that will launch the code in an interpreter. Maybe you
+make your example code editable, and update the displayed output after each
+edit.</li>
+</ul>
+<p>I could see all three of these being useful in linguistics. Here&#8217;s a random
+linguistics-y sentence:</p>
+<blockquote>
+<div>Consider the form <em>llegues</em> (<em>lleg-ues</em>, &#8216;come-SUBJ2sg&#8217;), pronounced /&#8217;je.ges/.</div></blockquote>
+<p>The <strong>Type Less/Think Less</strong> option for generating it might look like this:</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">T</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="gp">... </span><span class="s1">Consider the form {{ llegues|i }}, ({{ _|seg|i }},</span>
+<span class="gp">... </span><span class="s1">{{ _|gloss }}), pronounced {{ _|pron }}.</span>
+<span class="gp">... </span><span class="s1">&#39;&#39;&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">jinja</span><span class="o">.</span><span class="n">Template</span><span class="p">(</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">spelling</span><span class="p">)</span>
+<span class="go">&quot;Consider the form &lt;i&gt;llegues&lt;/i&gt; (&lt;i&gt;lleg-ues&lt;/i&gt;,</span>
+<span class="go">come-SUBJ2sg), pronounced /&#39;je.ges/.&quot;</span>
+</pre></div>
+</div>
+<p>I&#8217;m imagining here that we have a Fancy Linguistic Resource in the form of
+a <code class="code docutils literal"><span class="pre">dict</span></code>-like object <code class="code docutils literal"><span class="pre">spelling</span></code> that maps Spanish spellings onto
+richer objects representing linguistic forms. I&#8217;m also imagining filters
+<code class="code docutils literal"><span class="pre">seg</span></code>, <code class="code docutils literal"><span class="pre">gloss</span></code>, and <code class="code docutils literal"><span class="pre">pron</span></code> that extract a segmentation,
+gloss, or pronunciation from one of those objects, and a magic variable
+<code class="code docutils literal"><span class="pre">_</span></code> that&#8217;s assigned to the last form we looked up.)</p>
+<p>(This doesn&#8217;t actually save a ton of typing. It <em>could</em> save a lot of
+typing if we were doing something more repetitive and template-driven, like
+displaying conjugation tables for fifty different verbs. And &#8212; assuming
+we trusted our Spanish dictionary and filters &#8212; it would definitely save
+thinking and reduce the chance of errors.)</p>
+<p>The <strong>Test for Consistency</strong> option might look like this:</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">T</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="gp">... </span><span class="s1">Consider the form {{ llegues|i }}, ({{ _|seg(&#39;lleg-ues&#39;)|i }},</span>
+<span class="gp">... </span><span class="s1">{{ _|gloss(&#39;come-SUBJ2sg&#39;) }}), pronounced {{ _|pron(&quot;/&#39;je.ges&#39;/&quot;) }}.</span>
+<span class="gp">... </span><span class="s1">&#39;&#39;&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">jinja</span><span class="o">.</span><span class="n">Template</span><span class="p">(</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">spelling</span><span class="p">)</span>
+<span class="go">&quot;Consider the form &lt;i&gt;llegues&lt;/i&gt; (&lt;i&gt;lleg-ues&lt;/i&gt;,</span>
+<span class="go">come-SUBJ2sg), pronounced /&#39;je.ges/.&quot;</span>
+</pre></div>
+</div>
+<p>Now, instead of just trusting our <code class="code docutils literal"><span class="pre">seg</span></code>, <code class="code docutils literal"><span class="pre">gloss</span></code>, and <code class="code docutils literal"><span class="pre">pron</span></code>
+filters to give the right output, we&#8217;re passing them an argument telling them
+what their output should be. If their real output is different &#8212; indicating
+a typo in our document or a bug in the underlying linguistic resource &#8212; they
+could raise an error.</p>
+<p>The <strong>Enrich UX</strong> option might involve the same code as the other two, but would
+take advantage of our Fancy Linguistic Resource to generate extra HTML. Maybe
+now clicking the word <em>llegues</em> on the rendered page takes us to its dictionary
+entry, or hovering over it brings up a tooltip showing its tense, person, and
+number.</p>
+</div>
+
+  <div class="section">
+  
+    
+
+
+<div class="section">
+  <span style="float: left;">
+  
+  
+  <a href="../ausmus/">
+    <i class="fa fa-arrow-circle-left"></i>
+    The source of Conflict
+  </a>
+  
+  </span>
+  <span>&nbsp;</span>
+  <span style="float: right;">
+  
+  
+  <a href="../hardpart/">
+    The hard part(s)
+    <i class="fa fa-arrow-circle-right"></i>
+  </a>
+  </span>
+  
+</div>
+
+  
+  
+  </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../">Leah Velleman</a></h1>
+
+
+
+
+
+
+
+
+
+  
+  
+  <h2>
+  
+  <i class="fa fa-calendar"></i>
+    Jul 21, 2017
+  
+  </h2>
+
+  <ul>
+    
+
+  
+
+  
+
+  
+
+  
+
+  
+  <li><i class="fa-fw fa fa-tags"></i>
+      
+    
+      
+      <a href="../../blog/tag/cloudburst/">cloudburst</a>,
+      
+    
+      
+      <a href="../../blog/tag/linguistics/">linguistics</a>
+      
+    </li>
+  
+  
+  </ul>
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../poetry/">Poetry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../research/">Linguistics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../elsewhere/">Code</a></li>
+</ul>
+
+
+  <ul>
+    <li>Recent posts:</li>
+    <ul>
+    
+    
+    <li>
+        <span >
+            <a href="../../first-post/"
+                >First Post</a>
+            <span class="tagholder"> 
+                
+                <a class="tag" href="../../blog/tag/atag/">atag</a>
+                
+            </span>
+        </span>
+        
+    </li>
+    
+    <li>
+        <span >
+            <a href="../fstssuck/"
+                >Finite State Transducers Suck</a>
+            <span class="tagholder"> 
+                
+                <a class="tag" href="../../blog/tag/cloudburst/">cloudburst</a>
+                
+                <a class="tag" href="../../blog/tag/linguistics/">linguistics</a>
+                
+            </span>
+        </span>
+        
+    </li>
+    
+    <li>
+        <span >
+            <a href="../hardpart/"
+                >The hard part(s)</a>
+            <span class="tagholder"> 
+                
+                <a class="tag" href="../../blog/tag/cloudburst/">cloudburst</a>
+                
+                <a class="tag" href="../../blog/tag/linguistics/">linguistics</a>
+                
+            </span>
+        </span>
+        
+    </li>
+    
+    <li>
+        <span  class = "current" >
+            <a href="#"
+                
+                class = "current"
+                >How to do things with redundancy</a>
+            <span class="tagholder"> 
+                
+                <a class="tag" href="../../blog/tag/cloudburst/">cloudburst</a>
+                
+                <a class="tag" href="../../blog/tag/linguistics/">linguistics</a>
+                
+            </span>
+        </span>
+        
+    </li>
+    
+    <li>
+        <span >
+            <a href="../ausmus/"
+                >The source of Conflict</a>
+            <span class="tagholder"> 
+                
+                <a class="tag" href="../../blog/tag/fasola/">fasola</a>
+                
+                <a class="tag" href="../../blog/tag/history/">history</a>
+                
+            </span>
+        </span>
+        
+    </li>
+    
+</ul>
+    <li> 
+        <span class=""><a href="../../blog/archive/">Archive</a>
+            <span class="tagholder">
+            <a class="tag" href="../../blog/tag/">tags</a>
+            
+            <a class="tag" href="../../blog/2017/">2017</a>
+            
+            <a class="tag" href="../../blog/2015/">2015</a>
+            
+            <a class="tag" href="../../blog/2014/">2014</a>
+            
+        </span>
+    </span>
+</li>
+  </ul>
+  <div style="text-align: center;">
+    <a href="mailto:leahvelleman+website@gmail.com"><img src="../../blog/tag//../../_static/email.png" height="32px"></a>
+    <a href="https://www.twitter.com/leahvelleman"><img src="../../blog/tag//../../_static/twitter.png" height="32px"></a>
+    <a href="https://github.com/leahvelleman"><img src="../../blog/tag//../../_static/github.png" height="32px"></a>
+</div>
+
+  <h3><a href="../../blog/tag/">Tags</a></h3>
+  <style type="text/css">
+    ul.ablog-cloud {list-style: none; overflow: auto;}
+    ul.ablog-cloud li {float: left; height: 20pt; line-height: 18pt; margin-right: 5px;}
+    ul.ablog-cloud a {text-decoration: none; vertical-align: middle;}
+    li.ablog-cloud-1{font-size: 80%;}
+    li.ablog-cloud-2{font-size: 95%;}
+    li.ablog-cloud-3{font-size: 110%;}
+    li.ablog-cloud-4{font-size: 125%;}
+    li.ablog-cloud-5{font-size: 140%;}
+  </style>
+  <ul class="ablog-cloud">
+    
+      
+      <li class="ablog-cloud ablog-cloud-1">
+        <a href="../../blog/tag/atag/">atag</a></li>
+      
+    
+      
+      <li class="ablog-cloud ablog-cloud-3">
+        <a href="../../blog/tag/cloudburst/">cloudburst</a></li>
+      
+    
+      
+      <li class="ablog-cloud ablog-cloud-5">
+        <a href="../../blog/tag/fasola/">fasola</a></li>
+      
+    
+      
+      <li class="ablog-cloud ablog-cloud-1">
+        <a href="../../blog/tag/history/">history</a></li>
+      
+    
+      
+      <li class="ablog-cloud ablog-cloud-2">
+        <a href="../../blog/tag/lilypond/">lilypond</a></li>
+      
+    
+      
+      <li class="ablog-cloud ablog-cloud-3">
+        <a href="../../blog/tag/linguistics/">linguistics</a></li>
+      
+    
+      
+      <li class="ablog-cloud ablog-cloud-1">
+        <a href="../../blog/tag/poetry/">poetry</a></li>
+      
+    
+      
+      <li class="ablog-cloud ablog-cloud-1">
+        <a href="../../blog/tag/python/">python</a></li>
+      
+    
+      
+      <li class="ablog-cloud ablog-cloud-1">
+        <a href="../../blog/tag/ruby/">ruby</a></li>
+      
+    
+  </ul>
+
+  <h3><a href="../../blog/category/">Categories</a></h3>
+  <ul>
+  
+    
+    <li><a href="../../blog/category/music/">music (1)</a></li>
+    
+  
+  </ul>
+
+  <h3><a href="../../blog/archive/">Archives</a></h3>
+  <ul>
+  
+    
+    <li><a href="../../blog/2017/">2017 (4)</a></li>
+    
+  
+    
+    <li><a href="../../blog/2015/">2015 (3)</a></li>
+    
+  
+    
+    <li><a href="../../blog/2014/">2014 (3)</a></li>
+    
+  
+  </ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search/" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Leah Velleman.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../../_sources/posts/monthone.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

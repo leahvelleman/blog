@@ -1,0 +1,101 @@
+.. post:: Jul 21 2017
+   :tags: cloudburst, linguistics
+
+How to do things with redundancy
+================================
+
+API documentation has lots of examples. Examples tend to be redundant ---
+you show a statement *and* the result of evaluating it, even though the one
+can usually be predicted from the other.
+
+    >>> print("""You can probably guess what the next line of this example will say.""")
+    You can probably guess what the next line of this example will say
+
+Linguistic writing also has lots of examples. Usually those are also at least
+a little redundant. One reason is that, for the benefit of people who don't
+speak the language you're writing about, you usually show the same form at
+several different levels of representation --- spelling, pronunciation,
+segmentation, gloss, etc.
+
+.. code::
+
+    (1) Así se hace un ejemplo lingüistico.
+        [a.ʽsi se ʽa.se uŋ e.ʽχem.plo liŋ.ʽgwi.sti.ko]
+        así  se   hac-e    un     ejemplo      lingüistic-o
+        thus REFL make-3sg a.MASC example.MASC linguistic-MASC
+        'This is how you make a linguistic example.'
+
+So for instance --- to pick a piece of low-hanging fruit --- you could easily
+write a program to generate the pronunciation line of that example from the
+spelling line, just like Python generates output from input in an interactive
+session.
+
+In the software doc world, we have tools to do useful things with the redundancy
+of our examples. Could those tools do anything useful for linguistics writers?
+
+Here are some things we do with redundant examples in the tech world:
+
+* **Type Less/Think Less:** Use a runner like Dexy_ or xlKJFSD_ that can auto-generate the
+  output part of your examples, rather than entering it by hand.
+* **Test for Consistency:** Enter the input and the output parts of your
+  examples by hand, but use a tool like Autodoc_ that will check one against
+  the other and notify you if there is a discrepancy.
+* **Enrich UX:** There's lots of options here. Maybe you add a button
+  to your examples that will launch the code in an interpreter. Maybe you
+  make your example code editable, and update the displayed output after each
+  edit.
+
+I could see all three of these being useful in linguistics. Here's a random
+linguistics-y sentence:
+
+   Consider the form *llegues* (*lleg-ues*, 'come-SUBJ2sg'), pronounced /'je.ges/.
+
+The **Type Less/Think Less** option for generating it might look like this: 
+
+.. code:: python
+
+   >>> T = '''
+   ... Consider the form {{ llegues|i }}, ({{ _|seg|i }},
+   ... {{ _|gloss }}), pronounced {{ _|pron }}.
+   ... '''
+   >>> jinja.Template(T).render(spelling)
+   "Consider the form <i>llegues</i> (<i>lleg-ues</i>, 
+   come-SUBJ2sg), pronounced /'je.ges/."
+
+I'm imagining here that we have a Fancy Linguistic Resource in the form of
+a :code:`dict`-like object :code:`spelling` that maps Spanish spellings onto
+richer objects representing linguistic forms. I'm also imagining filters
+:code:`seg`, :code:`gloss`, and :code:`pron` that extract a segmentation,
+gloss, or pronunciation from one of those objects, and a magic variable
+:code:`_` that's assigned to the last form we looked up.)
+
+(This doesn't actually save a ton of typing. It *could* save a lot of
+typing if we were doing something more repetitive and template-driven, like
+displaying conjugation tables for fifty different verbs. And --- assuming
+we trusted our Spanish dictionary and filters --- it would definitely save
+thinking and reduce the chance of errors.)
+
+The **Test for Consistency** option might look like this:
+
+.. code:: python
+
+   >>> T = '''
+   ... Consider the form {{ llegues|i }}, ({{ _|seg('lleg-ues')|i }},
+   ... {{ _|gloss('come-SUBJ2sg') }}), pronounced {{ _|pron("/'je.ges'/") }}.
+   ... '''
+   >>> jinja.Template(T).render(spelling)
+   "Consider the form <i>llegues</i> (<i>lleg-ues</i>, 
+   come-SUBJ2sg), pronounced /'je.ges/."
+
+Now, instead of just trusting our :code:`seg`, :code:`gloss`, and :code:`pron`
+filters to give the right output, we're passing them an argument telling them
+what their output should be. If their real output is different --- indicating
+a typo in our document or a bug in the underlying linguistic resource --- they
+could raise an error.
+
+The **Enrich UX** option might involve the same code as the other two, but would
+take advantage of our Fancy Linguistic Resource to generate extra HTML. Maybe
+now clicking the word *llegues* on the rendered page takes us to its dictionary
+entry, or hovering over it brings up a tooltip showing its tense, person, and
+number.
+

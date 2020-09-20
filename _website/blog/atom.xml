@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title type="text">Leah Velleman Blog</title>
+  <id>True/blog/atom.xml</id>
+  <updated>2017-08-18T00:00:00Z</updated>
+  <link href="True" />
+  <link href="True/blog/atom.xml" rel="self" />
+  <generator uri="http://ablog.readthedocs.org" version="0.8.4">ABlog</generator>
+  <entry xml:base="True/blog/atom.xml">
+    <title type="text">First Post</title>
+    <id>True/first-post/</id>
+    <updated>2017-08-18T00:00:00Z</updated>
+    <published>2017-08-18T00:00:00Z</published>
+    <link href="True/first-post/" />
+    <author>
+      <name>Leah Velleman</name>
+    </author>
+    <content type="html">&lt;p&gt;World, hello again! This very first paragraph of the post will be used
+as excerpt in archives and feeds. Find out how to control how much is shown
+in &lt;a class=&quot;reference external&quot; href=&quot;http://ablog.readthedocs.org/manual/post-excerpts-and-images/&quot;&gt;Post Excerpts and Images&lt;/a&gt;. Remember
+that you can refer to posts by file name, e.g. &lt;code class=&quot;docutils literal&quot;&gt;&lt;span class=&quot;pre&quot;&gt;:ref:`first-post`&lt;/span&gt;&lt;/code&gt; results
+in &lt;a class=&quot;reference internal&quot; href=&quot;../first-post/#first-post&quot;&gt;&lt;span class=&quot;std std-ref&quot;&gt;First Post&lt;/span&gt;&lt;/a&gt;. Find out more at &lt;a class=&quot;reference external&quot; href=&quot;http://ablog.readthedocs.org/manual/cross-referencing-blog-pages/&quot;&gt;Cross-Referencing Blog Pages&lt;/a&gt;.&lt;/p&gt;
+</content>
+  </entry>
+  <entry xml:base="True/blog/atom.xml">
+    <title type="text">Finite State Transducers Suck</title>
+    <id>True/posts/fstssuck/</id>
+    <updated>2017-08-18T00:00:00Z</updated>
+    <published>2017-08-18T00:00:00Z</published>
+    <link href="True/posts/fstssuck/" />
+    <author>
+      <name></name>
+    </author>
+    <content type="html">&lt;p&gt;Writing finite state transducers by hand &lt;em&gt;really sucks.&lt;/em&gt;&lt;/p&gt;
+</content>
+  </entry>
+  <entry xml:base="True/blog/atom.xml">
+    <title type="text">The hard part(s)</title>
+    <id>True/posts/hardpart/</id>
+    <updated>2017-07-22T00:00:00Z</updated>
+    <published>2017-07-22T00:00:00Z</published>
+    <link href="True/posts/hardpart/" />
+    <author>
+      <name></name>
+    </author>
+    <content type="html">&lt;p&gt;In the last section I imagined a Fancy Linguistic Resource that would let you
+automate linguistic examples the way we already automate API examples &amp;#8212; so
+you might write this&lt;/p&gt;
+</content>
+  </entry>
+  <entry xml:base="True/blog/atom.xml">
+    <title type="text">How to do things with redundancy</title>
+    <id>True/posts/monthone/</id>
+    <updated>2017-07-21T00:00:00Z</updated>
+    <published>2017-07-21T00:00:00Z</published>
+    <link href="True/posts/monthone/" />
+    <author>
+      <name></name>
+    </author>
+    <content type="html">&lt;p&gt;API documentation has lots of examples. Examples tend to be redundant &amp;#8212;
+you show a statement &lt;em&gt;and&lt;/em&gt; the result of evaluating it, even though the one
+can usually be predicted from the other.&lt;/p&gt;
+</content>
+  </entry>
+  <entry xml:base="True/blog/atom.xml">
+    <title type="text">The source of Conflict</title>
+    <id>True/posts/ausmus/</id>
+    <updated>2015-06-05T00:00:00Z</updated>
+    <published>2015-06-05T00:00:00Z</published>
+    <link href="True/posts/ausmus/" />
+    <author>
+      <name></name>
+    </author>
+    <content type="html">&lt;p&gt;Elder John R. Daily&amp;#8217;s &lt;em&gt;Primitive Baptist Hymn and Tune Book&lt;/em&gt; is a seven-shape
+Primitive Baptist hymnal with a strikingly distinctive harmonic style. &lt;a class=&quot;footnote-reference&quot; href=&quot;#f1&quot; id=&quot;id1&quot;&gt;[1]&lt;/a&gt;
+It turns out that many of Daily&amp;#8217;s arrangements come from a few Primitive
+Baptist hymnals of the 1880s. One source is &lt;a class=&quot;reference external&quot; href=&quot;http://www.shenandoahharmony.com/2013/200-years-of-bourbon/&quot;&gt;Durant &amp;amp; Lester&amp;#8217;s 1886 &amp;#8220;Hymn and
+Tune Book.&amp;#8221;&lt;/a&gt;
+Another source is Sears &amp;amp; Ausmus&amp;#8217;s 1881 &lt;em&gt;Primitive Baptist Hymnal,&lt;/em&gt; which I
+haven&amp;#8217;t seen discussed elsewhere. These sources include a number of
+arrangements that were later printed in Daily.  They also include some
+arrangements that didn&amp;#8217;t make it into Daily, but that are written in a similar
+style.&lt;/p&gt;
+</content>
+  </entry>
+  <entry xml:base="True/blog/atom.xml">
+    <title type="text">A bug that describes itself</title>
+    <id>True/posts/self-referential-bug/</id>
+    <updated>2015-05-14T00:00:00Z</updated>
+    <published>2015-05-14T00:00:00Z</published>
+    <link href="True/posts/self-referential-bug/" />
+    <author>
+      <name></name>
+    </author>
+    <content type="html">&lt;p&gt;Today I found a bug that describes itself. In fact, it tells you how to fix
+itself.&lt;/p&gt;
+</content>
+  </entry>
+  <entry xml:base="True/blog/atom.xml">
+    <title type="text">@watts_ebooks</title>
+    <id>True/posts/wattsbot/</id>
+    <updated>2015-05-14T00:00:00Z</updated>
+    <published>2015-05-14T00:00:00Z</published>
+    <link href="True/posts/wattsbot/" />
+    <author>
+      <name></name>
+    </author>
+    <content type="html">&lt;p&gt;I&amp;#8217;ve been fascinated for a while by the idea of generative poetry. Recently I
+started tinkering with it myself, and my first experiment is working well
+enough that I&amp;#8217;ve set it up as a Twitter bot: &amp;#64;watts_ebooks, tweeting randomly
+generated hymn stanzas in the style of Isaac Watts, such as this (ethically and
+theologically dubious!) example:&lt;/p&gt;
+</content>
+  </entry>
+  <entry xml:base="True/blog/atom.xml">
+    <title type="text">Four-shape solfège</title>
+    <id>True/posts/four-shape/</id>
+    <updated>2014-09-23T00:00:00Z</updated>
+    <published>2014-09-23T00:00:00Z</published>
+    <link href="True/posts/four-shape/" />
+    <author>
+      <name></name>
+    </author>
+    <content type="html">&lt;p&gt;In &lt;a class=&quot;reference external&quot; href=&quot;movable-do.html&quot;&gt;another post&lt;/a&gt; I wondered whether it would be possible to
+enter notes using the four syllables used in Sacred Harp singing, where an
+octave is not &lt;cite&gt;do re mi fa sol la ti do&lt;/cite&gt; but rather &lt;cite&gt;fa so la fa so la mi fa&lt;/cite&gt;.
+I guessed that the answer was no, because LilyPond assumes that note names
+will repeat at the octave.&lt;/p&gt;
+</content>
+  </entry>
+  <entry xml:base="True/blog/atom.xml">
+    <title type="text">Movable-do in lilypond</title>
+    <id>True/posts/movable-do/</id>
+    <updated>2014-09-14T00:00:00Z</updated>
+    <published>2014-09-14T00:00:00Z</published>
+    <link href="True/posts/movable-do/" />
+    <author>
+      <name></name>
+    </author>
+    <content type="html">&lt;p&gt;LilyPond understands note names in a lot of different languages:&lt;/p&gt;
+</content>
+  </entry>
+  <entry xml:base="True/blog/atom.xml">
+    <title type="text">Kedron</title>
+    <id>True/posts/kedron/</id>
+    <updated>2014-09-07T00:00:00Z</updated>
+    <published>2014-09-07T00:00:00Z</published>
+    <link href="True/posts/kedron/" />
+    <author>
+      <name>me</name>
+    </author>
+    <content type="html">&lt;p&gt;Kedron (SH 48) is known to most Sacred Harp singers as a lovely, stark and
+simple minor-key tune. So I was startled to see that the &lt;a class=&quot;reference external&quot; href=&quot;http://people.bethel.edu/~rhomar/TunePages/Kedron.html&quot;&gt;original version,&lt;/a&gt; in the &lt;em&gt;United States
+Sacred Harmony&lt;/em&gt;, is strikingly chromatic in a way unlike anything else I&amp;#8217;ve
+encountered in the modern shapenote repertoire.&lt;/p&gt;
+</content>
+  </entry>
+</feed>

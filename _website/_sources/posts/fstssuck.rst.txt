@@ -1,0 +1,95 @@
+.. post:: Aug 18 2017
+   :tags: cloudburst, linguistics
+
+Finite State Transducers Suck
+=============================
+
+Writing finite state transducers by hand *really sucks.*  
+
+I think it might not have to.
+
+What we talk about when we talk about suck
+------------------------------------------
+
+(This is not an issue for most people. But if you've ever tried to do any
+kind of serious computational morphology in a low-resource language, you are
+nodding and grimacing right now.)
+
+Intuitively you might think it's because they're computationally underpowered.
+And if that's the reason they suck, then there's no fixing it — the reason
+people use them at all is that they're far enough from Turing-complete to have
+some convenient properties, so adding power is out of the question.
+
+But there's another possibility, which is that they suck for the same boring
+reasons that a lot of Turing-complete languages suck.  Writing FSTs means
+working in a domain-specific language that has...
+
+	* Syntax from an era when bits of disk space were expensive
+	* A tiny-to-nonexistent "standard library"
+	* No data types
+	* No debugger
+	* No namespaces or modules
+	* No build system
+
+Fixing *these* problems is actually a thing we can do without adding computational
+complexity. Adding types to a language, for instance, doesn't actually increase
+the number of things that it can handle in theory. (A Turing-complete language is
+Turing-complete with or without a good type system.) But it might well increase the
+number of things that a normal human would bother doing in it.
+
+Analogy: regular expressions
+----------------------------
+
+A lot of people have pointed out that "regular expression" really means two
+things. 
+
+One thing it can mean is "an expression that describes a `regular language
+<en.wikipedia.org/wiki/Regular_language>`_," meaning a language that can be
+recognized by a finite state automaton or a read-only Turing machine. If you
+wanted to be irritatingly pedantic, you could argue that this was a regular
+expression:
+
+.. code:: python
+
+   Trie(word for word in open("/usr/bin/words").readlines())
+
+After all, tries are a kind of finite state automaton, and
+this expression describes one. 
+
+But when most people say "regular expression," they're not talking about
+computational power — they're talking about restricted syntax. What they mean
+is "one of those irritating strings with a million slashes and asterisks that
+you use as an argument for `grep`." In fact, regular expressions in the second
+sense `don't have to be regular expressions in the first sense
+<https://nikic.github.io/2012/06/15/The-true-power-of-regular-expressions.html>`_.
+This one, as the previous link explains, isn't:
+
+.. code:: perl
+
+   "/^(a(?1)?b)$/"
+
+It matches strings consisting of an arbitrary number of `a`\ s followed by the 
+same number of `b`\ s. That's beyond the computational power of a finite
+state automaton. In the computational-power sense, it isn't a regular expresion.
+But in the restricted-syntax sense, it is.
+
+So when people say "regular expressions suck," they can mean one of two things:
+
+    1. "It sucks to work in a non-Turing-complete language when you're used to
+       Turing-completeness."
+
+    2. "It sucks to try to write real programs to do real tasks when you're
+       using a garbage syntax that looks like line noise."
+
+And these two problems have different solutions. The first would technically be
+solved by switching to Befunge, `doing everything with the S and K combinators
+<https://en.wikipedia.org/wiki/Combinatory_logic#Completeness_of_the_S-K_basis>`_,
+or writing binary executables bit-by-bit by hand. But none of those would get
+you anywhere on the second one.
+
+Back to FSTs
+------------
+
+My hunch right now is that FSTs have a lot more type-II suck than type-I suck.
+The issue isn't they're underpowered. It's that the syntax we use to create
+them is inconvenient.
